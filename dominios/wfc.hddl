@@ -1,0 +1,67 @@
+(define (domain wfc)
+    (:requirements :hierarchy)
+
+    (:types tile location direction - object)
+
+    (:predicates (empty ?l - location)
+                 (connect ?t1 ?t2 - tile ?d1 ?d2 - direction)
+                 (placed ?l - location ?t - tile)
+                 (inc ?a ?b - location)
+    )
+
+    (:task buildmap :parameters (?l ?le ?ld ?lb ?lc - location ?te ?td ?tb ?tc - tile ?de ?dd ?db ?dc ?dde ?ded ?dcb ?dbc - direction))
+    (:task buildmapcorner :parameters (?l ?lh ?lv - location ?th ?tv - tile ?dh ?dv ?dhh ?dvv - direction))
+    (:task buildmapmargin :parameters (?l ?l1 ?l2 ?l3 - location ?t1 ?t2 ?t3 - tile ?do1 ?do2 ?dno ?d1 ?d2 ?d3 - direction))
+    
+    (:method build-map-1
+        :parameters (?l ?le ?ld ?lb ?lc - location ?t ?te ?td ?tb ?tc - tile ?de ?dd ?db ?dc ?dde ?ded ?dcb ?dbc - direction)
+        :task (buildmap ?l ?le ?ld ?lb ?lc ?te ?td ?tb ?tc ?de ?dd ?db ?dc ?dde ?ded ?dcb ?dbc)
+        :precondition (and
+            (connect ?t ?te ?de ?dde) (inc ?l ?le)
+            (connect ?t ?td ?dd ?ded) (inc ?l ?ld)
+            (connect ?t ?tb ?db ?dcb) (inc ?l ?lb)
+            (connect ?t ?tc ?dc ?dbc) (inc ?l ?lc)
+        )
+        :subtasks (and
+            (placetile ?l ?t)
+        )
+    )
+
+    (:method build-map-2
+        :parameters (?l ?lh ?lv - location ?t ?th ?tv - tile ?dh ?dv ?dhh ?dvv - direction)
+        :task (buildmapcorner ?l ?lh ?lv ?th ?tv ?dh ?dv ?dhh ?dvv)
+        :precondition (and
+            (connect ?t ?th ?dh ?dhh) (inc ?l ?lh)
+            (connect ?t ?tv ?dv ?dvv) (inc ?l ?lv)
+        )
+        :subtasks (and
+            (placetile ?l ?t)
+        )
+    )
+
+    (:method build-map-3
+        :parameters (?l ?l1 ?l2 ?l3 - location ?t ?t1 ?t2 ?t3 - tile ?do1 ?do2 ?dno ?d1 ?d2 ?d3 - direction)
+        :task (buildmapmargin ?l ?l1 ?l2 ?l3 ?t1 ?t2 ?t3 ?do1 ?do2 ?dno ?d1 ?d2 ?d3)
+        :precondition (or
+            (and
+                (connect ?t ?t1 ?do1 ?d1) (inc ?l ?l1)
+                (connect ?t ?t2 ?do2 ?d2) (inc ?l ?l2)
+                (or (connect ?t ?t3 ?dno ?d3) (connect ?t ?t3 ?dno ?d3)) (inc ?l ?l3)
+            )
+            (and
+                (connect ?t ?t1 ?do1 ?d1) (inc ?l ?l1)
+                (connect ?t ?t2 ?do2 ?d2) (inc ?l ?l2)
+                (or (connect ?t ?t3 ?dno ?d3) (connect ?t ?t3 ?dno ?d3)) (inc ?l ?l3)
+            )
+        )
+        :subtasks (and
+            (placetile ?l ?t)
+        )
+    )
+
+    (:action placetile
+        :parameters (?l - location ?t - tile)
+        :precondition (empty ?l)
+        :effect (and (not (empty ?l)) (placed ?l ?t))
+    )
+)
