@@ -8,20 +8,6 @@
     (:htn
         :parameters ()
         :subtasks (and
-           ;(generaterotations t1)
-
-           ;(updatetileabstract x0 y0 t1 de)
-
-           ;(buildtileabstract x0 y0)
-           ;(buildtileabstract x0 y1)
-           ;(buildtileabstract x0 y2)
-           ;(buildtileabstract x1 y0)
-           ;(buildtileabstract x1 y1)
-           ;(buildtileabstract x1 y2)
-           ;(buildtileabstract x2 y0)
-           ;(buildtileabstract x2 y1)
-           ;(buildtileabstract x2 y2)
-
             (buildmapabstract x0 y0)
            ;(buildmapabstract x0 y1)
            ;(buildmapabstract x0 y2)
@@ -67,14 +53,19 @@
         (empty x2 y1)
         (empty x2 y2)
 
-        (inc x0 x1)
+        (dec x0 x1)
         (inc x1 x0)
-        (inc x1 x2)
+        (dec x1 x2)
         (inc x2 x1)
-        (inc y0 y1)
+        (dec y0 y1)
         (inc y1 y0)
-        (inc y1 y2)
+        (dec y1 y2)
         (inc y2 y1)
+
+        (up-border x0)
+        (down-border x2)
+        (left-border y0)
+        (right-border y2)
 
         (possible x0 y0 t1)
         (possible x0 y0 t2)

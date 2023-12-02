@@ -9,6 +9,11 @@
                  (connect ?t1 ?t2 - tile ?d - direction)
                  (possible ?x ?y - location ?t - tile)
                  (inc ?a ?b - location)
+                 (dec ?a ?b - location)
+                 (up-border ?x - location)
+                 (down-border ?x - location)
+                 (left-border ?y - location)
+                 (right-border ?y - location)
     )
 
     (:task buildmapabstract :parameters (?x ?y - location))
@@ -81,28 +86,7 @@
         )
     )
 
-    (:method update-tiles-dummy
-        :parameters (?x ?y ?w - location ?t - tile ?d - direction)
-        :task (updatetileabstract ?x ?y ?t ?d)
-        :precondition (and
-            (not (and (inc ?w ?y) (= ?d de)))
-            (not (and (inc ?y ?w) (= ?d dd)))
-            (not (and (inc ?w ?x) (= ?d dc)))
-            (not (and (inc ?x ?w) (= ?d db)))
-        )
-        :subtasks ()
-    )
-
-    (:method update-tiles-1
-        :parameters (?x ?y ?w - location ?t - tile ?d - direction)
-        :task (updatetileabstract ?x ?y ?t ?d)
-        :precondition (and (inc ?w ?y) (= ?d de))
-        :subtasks (and
-            (updatetile ?x ?w ?t ?d)
-        )
-    )
-
-    (:method update-tiles-2
+    (:method update-tiles-right-1
         :parameters (?x ?y ?w - location ?t - tile ?d - direction)
         :task (updatetileabstract ?x ?y ?t ?d)
         :precondition (and (inc ?y ?w) (= ?d dd))
@@ -111,22 +95,43 @@
         )
     )
 
-    (:method update-tiles-3
+    (:method update-tiles-left-2
         :parameters (?x ?y ?w - location ?t - tile ?d - direction)
         :task (updatetileabstract ?x ?y ?t ?d)
-        :precondition (and (inc ?w ?x) (= ?d dc))
+        :precondition (and (dec ?y ?w) (= ?d de))
         :subtasks (and
-            (updatetile ?w ?y ?t ?d)
+            (updatetile ?x ?w ?t ?d)
         )
     )
 
-    (:method update-tiles-4
+    (:method update-tiles-down-3
         :parameters (?x ?y ?w - location ?t - tile ?d - direction)
         :task (updatetileabstract ?x ?y ?t ?d)
         :precondition (and (inc ?x ?w) (= ?d db))
         :subtasks (and
             (updatetile ?w ?y ?t ?d)
         )
+    )
+
+    (:method update-tiles-up-4
+        :parameters (?x ?y ?w - location ?t - tile ?d - direction)
+        :task (updatetileabstract ?x ?y ?t ?d)
+        :precondition (and (dec ?x ?w) (= ?d dc))
+        :subtasks (and
+            (updatetile ?w ?y ?t ?d)
+        )
+    )
+
+    (:method update-tiles-stop-1
+        :parameters (?x ?y - location ?t - tile ?d - direction)
+        :task (updatetileabstract ?x ?y ?t ?d)
+        :precondition (or
+            (and (up-border ?x) (= ?d db))
+            (and (down-border ?x) (= ?d dc))
+            (and (left-border ?y) (= ?d dd))
+            (and (right-border ?y) (= ?d de))
+        )
+        :subtasks ()
     )
 
     (:action placetile
