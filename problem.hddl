@@ -2,12 +2,16 @@
     (:domain wfc)
     (:objects
         x0 x1 x2 y0 y1 y2 - location
-        t1 t2 t3 - tile
+        t1 t2 t3 t4 - tile
     )
 
     (:htn
         :parameters ()
-        :subtasks (and
+        :ordered-subtasks (and
+            (buildmapwithtileabstract x0 y0 t1)
+            (buildmapwithtileabstract x0 y2 t2)
+            (buildmapwithtileabstract x1 y1 t3)
+
             (buildmapabstract x0 y0)
            ;(buildmapabstract x0 y1)
            ;(buildmapabstract x0 y2)
@@ -35,6 +39,8 @@
         (connect t2 t2 db)
         (connect t2 t1 de)
         (connect t2 t1 dd)
+        (connect t2 t4 dc)
+        (connect t2 t4 db)
 
         (connect t3 t3 de)
         (connect t3 t3 dd)
@@ -42,6 +48,17 @@
         (connect t3 t3 db)
         (connect t3 t1 dc)
         (connect t3 t1 db)
+        (connect t3 t4 de)
+        (connect t3 t4 db)
+
+        (connect t4 t4 de)
+        (connect t4 t4 dd)
+        (connect t4 t4 dc)
+        (connect t4 t4 db)
+        (connect t4 t2 dc)
+        (connect t4 t2 db)
+        (connect t4 t3 de)
+        (connect t4 t3 db)
 
         (empty x0 y0)
         (empty x0 y1)
@@ -70,30 +87,39 @@
         (possible x0 y0 t1)
         (possible x0 y0 t2)
         (possible x0 y0 t3)
+        (possible x0 y0 t4)
         (possible x0 y1 t1)
         (possible x0 y1 t2)
         (possible x0 y1 t3)
+        (possible x0 y1 t4)
         (possible x0 y2 t1)
         (possible x0 y2 t2)
         (possible x0 y2 t3)
+        (possible x0 y2 t4)
         (possible x1 y0 t1)
         (possible x1 y0 t2)
         (possible x1 y0 t3)
+        (possible x1 y0 t4)
         (possible x1 y1 t1)
         (possible x1 y1 t2)
         (possible x1 y1 t3)
+        (possible x1 y1 t4)
         (possible x1 y2 t1)
         (possible x1 y2 t2)
         (possible x1 y2 t3)
+        (possible x1 y2 t4)
         (possible x2 y0 t1)
         (possible x2 y0 t2)
         (possible x2 y0 t3)
+        (possible x2 y0 t4)
         (possible x2 y1 t1)
         (possible x2 y1 t2)
         (possible x2 y1 t3)
+        (possible x2 y1 t4)
         (possible x2 y2 t1)
         (possible x2 y2 t2)
         (possible x2 y2 t3)
+        (possible x2 y2 t4)
     )
 
     (:goal (and

@@ -16,6 +16,7 @@
                  (right-border ?y - location)
     )
 
+    (:task buildmapwithtileabstract :parameters (?x ?y - location ?t - tile))
     (:task buildmapabstract :parameters (?x ?y - location))
     (:task buildtileabstract :parameters (?x ?y - location))
     (:task updatetileabstract :parameters (?x ?y - location ?t - tile ?d - direction))
@@ -72,6 +73,20 @@
         )
         :subtasks ()
     )
+
+    (:method build-map-with-tile-1
+        :parameters (?x ?y - location ?t - tile)
+        :task (buildmapwithtileabstract ?x ?y ?t)
+        :precondition ()
+        :ordered-subtasks (and
+            (placetile ?x ?y ?t)
+            (updatetileabstract ?x ?y ?t de)
+            (updatetileabstract ?x ?y ?t dd)
+            (updatetileabstract ?x ?y ?t db)
+            (updatetileabstract ?x ?y ?t dc)
+        )
+    )
+
 
     (:method build-tile-1
         :parameters (?x ?y - location ?t - tile)
