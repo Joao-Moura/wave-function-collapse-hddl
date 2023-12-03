@@ -41,9 +41,12 @@ def escreve_problema(largura, altura, restricoes_tiles, tiles_posicionados):
 
     objects = ' '.join(linhas + colunas) + ' - location\n' + ' '.join(tiles) + ' - tile'
 
+    x_inicial = tiles_posicionados[26:28] if tiles_posicionados else f'x{random.randrange(0, altura)}'
+    y_inicial = tiles_posicionados[29:31] if tiles_posicionados else f'y{random.randrange(0, largura)}'
+
     subtasks = '\n'.join(
         tiles_posicionados + [
-            f'(buildmapabstract x{random.randrange(0, altura)} y{random.randrange(0, largura)})'
+            f'(buildmapabstract {x_inicial} {y_inicial})'
         ]
     )
 
