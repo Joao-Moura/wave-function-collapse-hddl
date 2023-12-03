@@ -18,8 +18,12 @@ def remove_extra_files(files):
 
 
 def main():
-    subprocess.run(['./build.sh'] + (sys.argv[1:] if len(sys.argv) > 2 else []))
-    mapas = glob('benchmark/mapas/*')
+    if len(sys.argv) < 2:
+        print(f"Usage: {sys.argv[0]} <track> <planner_args>")
+        exit(1)
+
+    subprocess.run(['./build.sh'] + (sys.argv[2:] if len(sys.argv) >= 3 else []))
+    mapas = glob(f'benchmark/mapas/{sys.argv[1]}/*')
     mapas.sort()
 
     tempo_total_final = 0
