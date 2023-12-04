@@ -25,11 +25,11 @@ def remove_extra_files(files):
 
 
 def main():
-    if len(sys.argv) < 2:
-        print(f"Usage: {sys.argv[0]} <track> <planner_args>")
+    if len(sys.argv) < 3:
+        print(f"Usage: {sys.argv[0]} <track> <saida_sas> <planner_args>")
         exit(1)
 
-    subprocess.run(['./build.sh'] + (sys.argv[2:] if len(sys.argv) >= 3 else []))
+    subprocess.run(['./build.sh'] + (sys.argv[3:] if len(sys.argv) >= 4 else []))
     mapas = glob(f'benchmark/mapas/{sys.argv[1]}/*')
     mapas.sort()
 
@@ -44,7 +44,7 @@ def main():
         initial_time = time.time()
         try:
             retorno = subprocess.run(
-                ['python3', 'wfc.py3'], stdin=f, timeout=SETTINGS[sys.argv[1]],
+                ['python3', 'wfc.py3', sys.argv[2]], stdin=f, timeout=SETTINGS[sys.argv[1]],
                 stdout=subprocess.PIPE, stderr=subprocess.PIPE
             )
         except subprocess.TimeoutExpired:

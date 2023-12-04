@@ -1,5 +1,8 @@
 import subprocess
 import random
+import sys
+import re
+
 
 PLANEJADOR = "<alterar_planejador>".strip().split(' ')
 
@@ -113,17 +116,32 @@ def filtra_resultado(retorno):
         if 'root' in r:
             break
 
-        valores = r.split(' ')[1:]
-        linha = f'{valores[0].upper()[0]} {valores[1][1]} {valores[2][1]} {valores[3][1]}'
+        if 'placetile' not in r and 'updatetile' not in r:
+            continue
 
-        if valores[0][0] == 'u':
-            linha += f' {valores[4][1]}'
+        x = re.findall(r'x\d{1,2}?', r)[0][1]
+        y = re.findall(r'y\d{1,2}?', r)[0][1]
+        t = re.findall(r't\d{1,2}?', r)[0][1]
+        d = re.findall(r'd[edbc]', r)
+
+        linha = f'{r.split(" ")[1].upper()[0]} {x} {y} {t}'
+
+        if d:
+            linha += f' {d[0][1]}'
         saida.append(linha)
 
     print('\n'.join(saida))
 
 
 def main():
+    if len(sys.argv) < 2:
+        print(f"Usage: {sys.argv[0]} <saida_sas>")
+        exit(1)
+
+    if sys.argv[1] not in ['stdout', 'arquivo']:
+        print(f"Avaliable read methods: stdout, arquivo")
+        exit(1)
+
     escreve_dominio()
     escreve_problema(*le_entrada())
 
@@ -132,7 +150,13 @@ def main():
         stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd='./tmp'
     )
 
-    retorno_stdout = retorno.stdout.decode('utf-8')
+    stdout_ou_arquivo = sys.argv[1]
+
+    if stdout_ou_arquivo == 'stdout':
+        retorno_stdout = retorno.stdout.decode('utf-8')
+    else:
+        with open('<alterar_local_solucao>', 'r') as f:
+            retorno_stdout = f.read()
     filtra_resultado(retorno_stdout)
 
 
