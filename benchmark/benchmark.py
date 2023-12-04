@@ -9,6 +9,13 @@ from glob import glob
 from validador import valida_jogadas
 
 
+SETTINGS = {
+    'agile': 150,
+    'satisficing': 900,
+    'optimal': 900,
+}
+
+
 def remove_extra_files(files):
     for arquivos_extras in files:
         try:
@@ -35,8 +42,14 @@ def main():
         f.seek(0)
 
         initial_time = time.time()
-        retorno = subprocess.run(
-            ['python3', 'wfc.py3'], stdin=f, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        try:
+            retorno = subprocess.run(
+                ['python3', 'wfc.py3'], stdin=f, timeout=SETTINGS[sys.argv[1]],
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE
+            )
+        except subprocess.TimeoutExpired:
+            print(f'Execução mapa {mapa} deu timeout em {SETTINGS[sys.argv[1]]}s [Derrota]')
+            continue
         tempo_total = time.time() - initial_time
 
         f.close()
