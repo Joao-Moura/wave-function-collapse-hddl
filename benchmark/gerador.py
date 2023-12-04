@@ -1,4 +1,5 @@
 import sys
+import copy
 
 from random import choice, randint, uniform
 
@@ -15,7 +16,7 @@ SETTINGS = {
         'maxnotempty': 0.60
     },
     'optimal': {
-        'size': [i for i in range(6, 20)],
+        'size': [i for i in range(8, 20)],
         'maxnotempty': 0.50
     },
 }
@@ -29,6 +30,7 @@ TILES_CONFIGURATION = [
 ]
 
 POSSIBLE_TILES = [str(i) for i in range(len(TILES_CONFIGURATION))]
+PRE_TILES = ['3']  # NOTE: Prevents the generator from needing the wfc algorithm
 
 TILES_RESTRICTION = {
     tile: [
@@ -43,7 +45,7 @@ def generate_placed_tile(map_size, placedtiles):
     tiles = []
 
     map = [
-        [(None, POSSIBLE_TILES) for _ in range(map_size)]
+        [(None, PRE_TILES) for _ in range(map_size)]
         for _ in range(map_size)
     ]
 
@@ -53,12 +55,28 @@ def generate_placed_tile(map_size, placedtiles):
         if map[x][y][0] or t not in map[x][y][1]:
             continue
 
-        map[x][y] = (t, map[x][y][1])
-        map = atualiza_adjacentes(x, y-1, 'd', t, map, TILES_RESTRICTION)
-        map = atualiza_adjacentes(x, y+1, 'e', t, map, TILES_RESTRICTION)
-        map = atualiza_adjacentes(x-1, y, 'b', t, map, TILES_RESTRICTION)
-        map = atualiza_adjacentes(x+1, y, 'c', t, map, TILES_RESTRICTION)
+        map_temp = copy.copy(map)
 
+        map_temp[x][y] = (t, map_temp[x][y][1])
+        map_temp = atualiza_adjacentes(x, y-1, 'd', t, map_temp, TILES_RESTRICTION)
+        map_temp = atualiza_adjacentes(x, y+1, 'e', t, map_temp, TILES_RESTRICTION)
+        map_temp = atualiza_adjacentes(x-1, y, 'b', t, map_temp, TILES_RESTRICTION)
+        map_temp = atualiza_adjacentes(x+1, y, 'c', t, map_temp, TILES_RESTRICTION)
+
+        map_with_error = False
+        for line in map_temp:
+            for column in line:
+                if not column[1]:
+                    map_with_error = True
+                    break
+            else:
+                continue
+            break
+
+        if map_with_error:
+            continue
+
+        map = copy.copy(map_temp)
         tiles.append(f'{x} {y} {t}')
 
     return tiles
@@ -77,7 +95,7 @@ def main():
 
     maps = {}
 
-    for i in range(int(sys.argv[2])):
+    while len(maps.keys()) != int(sys.argv[2]):
         map_file = []
         map_size = choice(settings['size'])
 

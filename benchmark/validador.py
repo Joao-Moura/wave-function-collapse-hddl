@@ -14,12 +14,12 @@ def extrai_entrada(entrada):
     return largura, altura, restricoes_tiles
 
 
-def atualiza_restricoes(t, direcao, restricoes):
+def atualiza_restricoes(regras_antigas, t, direcao, restricoes):
     novas_regras = []
 
     for tile, restricao in restricoes.items():
         for res in restricao:
-            if res == f'{t}{direcao}':
+            if res == f'{t}{direcao}' and tile in regras_antigas:
                 novas_regras.append(tile)
 
     return novas_regras
@@ -29,7 +29,10 @@ def atualiza_adjacentes(novo_x, novo_y, direcao, t, mapa, restricoes):
     if novo_x < 0 or novo_y < 0 or novo_x >= len(mapa) or novo_y >= len(mapa[0]):
         return mapa
 
-    mapa[novo_x][novo_y] = (mapa[novo_x][novo_y][0], atualiza_restricoes(t, direcao, restricoes))
+    mapa[novo_x][novo_y] = (
+        mapa[novo_x][novo_y][0],
+        atualiza_restricoes(mapa[novo_x][novo_y][1], t, direcao, restricoes)
+    )
     return mapa
 
 
